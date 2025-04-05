@@ -132,8 +132,23 @@
         <option value="cyan">Cyan Gradient</option>
         <option value="blue">Blue Gradient</option>
         <option value="purple">Purple Gradient</option>
+        <option value="custom">Custom Gradient</option>
       </select>
       <span id="barGradientPreview" style="display:inline-block; width:80px; height:18px; margin-left:10px; border:1px solid #ccc; vertical-align:middle;"></span><br>
+     
+      <div id="customColorInputs" style="margin-top: 10px; display: none;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="min-width: 75px;">Min Color:</span>
+            <input type="color" id="customMinColor" value="#e0ecf4">
+          </div>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="min-width: 75px;">Max Color:</span>
+            <input type="color" id="customMaxColor" value="#6baed6">
+          </div>
+        </div>
+      </div>
+
     </fieldset>
 
     <!-- Error Bar Settings -->
@@ -345,20 +360,31 @@
   }
 
   function updateBarGradientPreview() {
-    const gradientMap = {
-      red: "linear-gradient(to right, #fee5d9, #e31a1c)",
-      orange: "linear-gradient(to right, #feedde, #fd8d3c)",
-      yellow: "linear-gradient(to right, #ffffb2, #fec44f)",
-      green: "linear-gradient(to right, #e5f5e0, #2ca25f)",
-      cyan: "linear-gradient(to right, #e0f3f8, #3182bd)",
-      blue: "linear-gradient(to right, #e0ecf4, #6baed6)",
-      purple: "linear-gradient(to right, #f2f0f7, #9e1a5e)"
-    };
     const selected = document.getElementById("colorGradient").value;
-    document.getElementById("barGradientPreview").style.background = gradientMap[selected];
+    const preview = document.getElementById("barGradientPreview");
+    const customInputs = document.getElementById("customColorInputs");
+    const customPreview = document.getElementById("customGradientPreview");
+  
+    if (selected === "custom") {
+      customInputs.style.display = "block";
+      const min = document.getElementById("customMinColor").value;
+      const max = document.getElementById("customMaxColor").value;
+      preview.style.background = `linear-gradient(to right, ${min}, ${max})`;
+      customPreview.style.background = `linear-gradient(to right, ${min}, ${max})`;
+    } else {
+      customInputs.style.display = "none";
+      const gradientMap = {
+        red: "linear-gradient(to right, #fee5d9, #e31a1c)",
+        orange: "linear-gradient(to right, #feedde, #fd8d3c)",
+        yellow: "linear-gradient(to right, #ffffb2, #fec44f)",
+        green: "linear-gradient(to right, #e5f5e0, #2ca25f)",
+        cyan: "linear-gradient(to right, #e0f3f8, #3182bd)",
+        blue: "linear-gradient(to right, #e0ecf4, #6baed6)",
+        purple: "linear-gradient(to right, #f2f0f7, #9e1a5e)"
+      };
+      preview.style.background = gradientMap[selected] || "transparent";
+    }
   }
-  document.getElementById("colorGradient").addEventListener("change", updateBarGradientPreview);
-  updateBarGradientPreview();
 
   document.getElementById("plotButton").addEventListener("click", function () {
     const gradients = {
@@ -385,6 +411,12 @@
       upperErrors.push(high - value);
     });
 
+    if (document.getElementById("colorGradient").value === "custom") {
+      const min = document.getElementById("customMinColor").value;
+      const max = document.getElementById("customMaxColor").value;
+      gradients.custom = [[0, min], [1, max]];
+    }
+    
     let trace = {
       x: groups.map((_, i) => i),
       y: Values,
@@ -504,6 +536,11 @@
       `Mean ± SD: <span style="color:blue;">${mean.toFixed(3)} ± ${sd.toFixed(3)}</span>`;
       // `Mean : ${mean.toFixed(3)}&emsp;Mean + SD: ${meanPlusSD.toFixed(3)}&emsp;Mean - SD: ${meanMinusSD.toFixed(3)}&emsp; Mean ± SD: ${mean.toFixed(3)} ± ${sd.toFixed(3)}`;
   });
+
+document.getElementById("colorGradient").addEventListener("change", updateBarGradientPreview);
+document.getElementById("customMinColor").addEventListener("input", updateBarGradientPreview);
+document.getElementById("customMaxColor").addEventListener("input", updateBarGradientPreview);
+updateBarGradientPreview(); // 页面初始化时自动显示颜色
 </script>
 </body>
 </html>
