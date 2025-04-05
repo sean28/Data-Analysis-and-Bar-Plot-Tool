@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Analysis and Bar Plot Tool</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1, h2, h3 { color: #333; }
+    textarea, input, select { padding: 5px; margin: 5px 0; }
+    table, th, td {
+      border: 1px solid #ccc;
+      border-collapse: collapse;
+      padding: 5px;
+      text-align: center;
+    }
+    table { margin-bottom: 10px; }
+    .hide-borders table, .hide-borders th, .hide-borders td {
+      border: none;
+    }
+    label {
+      display: inline-block;
+      width: 200px;
+      margin-top: 5px;
+    }
+    #plotDiv { margin-top: 20px; }
+    #colorPreview {
+      display: inline-block;
+      width: 30px;
+      height: 20px;
+      border: 1px solid #ccc;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    fieldset {
+      border: 1px solid #aaa;
+      padding: 10px;
+      margin-top: 15px;
+      box-sizing: border-box;
+    }
+    legend {
+      font-weight: bold;
+      padding: 0 10px;
+    }
+    #plotButton, #exportPNG {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Title  -->
+<h1 style="text-align: center;">Data Analysis and Bar Plot Tool 1.0</h1>
+<div style="text-align: center; line-height: 1.5; font-size: 16px; margin-top: -10px; margin-bottom: 20px;">
+  Team of drug design and discovery<br>
+  Dr. Sean
+</div>
+
+<section id="calc">
+  <h2>Calculate Mean and Standard Deviation</h2>
+  <p>Enter comma-separated values (e.g.,  3.628641, 4.082707, 3.811905, 3.921466, 3.883375, 3.915212, 4.134172, 4.041885, ...):</p>
+  <textarea id="valuesInput" rows="2" cols="50"></textarea><br>
+  <button id="calcButton">Calculate</button>
+  <p id="calcOutput"></p>
+</section>
+
+<hr>
+
+<section id="plotSection">
+  <h2>Bar Plot for Value</h2>
+  <label><input type="checkbox" id="toggleBorders" checked> Show Table Borders</label>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Group</th>
+        <th>Value</th>
+        <th>Lower Bound</th>
+        <th>Upper Bound</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <tr>
+        <td><input type="text" value="Control" class="groupName"></td>
+        <td><input type="number" step="any" value="3.927" class="Value"></td>
+        <td><input type="number" step="any" value="3.765" class="ValueLower"></td>
+        <td><input type="number" step="any" value="4.089" class="ValueUpper"></td>
+        <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+      </tr>
+      <tr>
+        <td><input type="text" value="Model" class="groupName"></td>
+        <td><input type="number" step="any" value="6.123" class="Value"></td>
+        <td><input type="number" step="any" value="4.519" class="ValueLower"></td>
+        <td><input type="number" step="any" value="7.727" class="ValueUpper"></td>
+        <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+      </tr>
+      <tr>
+        <td><input type="text" value="SY-L" class="groupName"></td>
+        <td><input type="number" step="any" value="5.563" class="Value"></td>
+        <td><input type="number" step="any" value="5.057" class="ValueLower"></td>
+        <td><input type="number" step="any" value="6.069" class="ValueUpper"></td>
+        <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+      </tr>
+      <tr>
+        <td><input type="text" value="SY-H" class="groupName"></td>
+        <td><input type="number" step="any" value="4.856" class="Value"></td>
+        <td><input type="number" step="any" value="4.119" class="ValueLower"></td>
+        <td><input type="number" step="any" value="5.593" class="ValueUpper"></td>
+        <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="button" onclick="addRow()">Add Group</button>
+
+  <h3>Plot Customization</h3>
+
+  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <!-- Bar Settings -->
+    <fieldset style="flex: 1; min-width: 300px;">
+      <legend>Bar Style Settings</legend>
+      <label for="barWidth">Bar Width:</label>
+      <input type="number" step="any" id="barWidth" value="0.35"><br>
+
+      <label for="colorGradient">Select Bar Color Gradient:</label>
+      <select id="colorGradient">
+        <option value="red">Red Gradient</option>
+        <option value="orange">Orange Gradient</option>
+        <option value="yellow">Yellow Gradient</option>
+        <option value="green">Green Gradient</option>
+        <option value="cyan">Cyan Gradient</option>
+        <option value="blue">Blue Gradient</option>
+        <option value="purple">Purple Gradient</option>
+      </select>
+      <span id="barGradientPreview" style="display:inline-block; width:80px; height:18px; margin-left:10px; border:1px solid #ccc; vertical-align:middle;"></span><br>
+    </fieldset>
+
+    <!-- Error Bar Settings -->
+    <fieldset style="flex: 1; min-width: 300px;">
+      <legend>Error Bar Settings</legend>
+      <label for="errorBarVisible">Show Error Bars:</label>
+      <input type="checkbox" id="errorBarVisible" checked><br>
+
+      <label for="errorBarWidth">Error Bar Width:</label>
+      <input type="number" step="any" id="errorBarWidth" value="8"><br>
+
+      <label for="errorBarThickness">Error Bar Thickness:</label>
+      <input type="number" step="any" id="errorBarThickness" value="2"><br>
+
+      <label for="errorBarColor">Select Error Bar Color:</label>
+      <select id="errorBarColor">
+        <option value="#b50f11">Red</option>
+        <option value="#e3701e">Orange</option>
+        <option value="#d4a02a">Yellow</option>
+        <option value="#1b8148">Green</option>
+        <option value="#22639b">Cyan</option>
+        <option value="#6e0d3f">Purple</option>
+        <option value="#000000">Black</option>
+        <option value="#999999">Gray</option>
+      </select>
+      <label for="errorBarOpacity">Error Bar Opacity (0~1):</label>
+      <input type="number" id="errorBarOpacity" min="0" max="1" step="0.1" value="1">
+      <span id="colorPreview"></span><br>
+    </fieldset>
+  </div>
+  
+  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <!-- X-axis Label -->
+    <fieldset style="flex: 1; min-width: 300px;">
+      <legend>X-axis Label</legend>
+      <label for="xAxisLabel">X-axis Label:</label>
+      <input type="text" id="xAxisLabel" value="Group"><br>
+    </fieldset>
+     <!-- Y-axis Label -->
+  <fieldset style="flex: 1; min-width: 300px;">
+    <legend>Y-axis Label</legend>
+    <label for="yAxisLabel">Y-axis Label:</label>
+    <input type="text" id="yAxisLabel" value="Value"><br>
+  </fieldset>
+  </div>
+ 
+
+  <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+    <!-- X-axis Settings -->
+    <fieldset style="flex: 1; min-width: 300px;">
+      <legend>X-axis Settings</legend>
+      <label for="showXTick">Show X-axis Ticks:</label>
+      <input type="checkbox" id="showXTick" checked><br>
+
+      <label for="xTickDirection">X-axis Tick Direction:</label>
+      <select id="xTickDirection">
+        <option value="outside">Outside</option>
+        <option value="inside">Inside</option>
+      </select><br>
+
+      <label for="xTickWidth">X-axis Tick Width:</label>
+      <input type="number" id="xTickWidth" value="2" step="0.25"><br>
+
+      <label for="xTickLength">X-axis Tick Length:</label>
+      <input type="number" id="xTickLength" value="5" step="1"><br>
+
+      <label for="showXAxis">Show X-axis Line:</label>
+      <input type="checkbox" id="showXAxis" checked><br>
+
+      <label for="showXGrid">Show X-axis Grid Lines:</label>
+      <input type="checkbox" id="showXGrid" checked><br>
+
+      <label for="xAxisColor">X-axis Line Color:</label>
+      <select id="xAxisColor">
+        <option value="black">Black</option>
+        <option value="grey" selected>Grey</option>
+      </select>
+      <label for="xAxisOpacity" style="margin-left: 40px;">
+        Opacity (0~1):
+        <input type="number" id="xAxisOpacity" min="0" max="1" step="0.1" value="1" style="width: 60px; margin-left: 20px;">
+      </label><br>
+      </select>
+
+      <label for="xAxisWidth">X-axis Line Width:</label>
+      <input type="number" id="xAxisWidth" value="2" step="0.5"><br>
+    </fieldset>
+
+    <!-- Y-axis Settings -->
+    <fieldset style="flex: 1; min-width: 300px;">
+      <legend>Y-axis Settings</legend>
+      <label for="showYTick">Show Y-axis Ticks:</label>
+      <input type="checkbox" id="showYTick" checked><br>
+
+      <label for="yTickDirection">Y-axis Tick Direction:</label>
+      <select id="yTickDirection">
+        <option value="outside">Outside</option>
+        <option value="inside">Inside</option>
+      </select><br>
+
+      <label for="yTickWidth">Y-axis Tick Width:</label>
+      <input type="number" id="yTickWidth" value="2" step="0.25"><br>
+
+      <label for="yTickLength">Y-axis Tick Length:</label>
+      <input type="number" id="yTickLength" value="5" step="1"><br>
+
+      <label for="showYAxis">Show Y-axis Line:</label>
+      <input type="checkbox" id="showYAxis" checked><br>
+
+      <label for="showYGrid">Show Y-axis Grid Lines:</label>
+      <input type="checkbox" id="showYGrid" checked><br>
+
+      <label for="yAxisColor">Y-axis Line Color:</label>
+      <select id="yAxisColor">
+        <option value="black">Black</option>
+        <option value="grey" selected>Grey</option>
+      </select>
+      <label for="yAxisOpacity" style="margin-left: 20px;">
+        Opacity (0~1):
+        <input type="number" id="yAxisOpacity" min="0" max="1" step="0.1" value="1" style="width: 60px; margin-left: 20px;">
+      </label><br>
+      </select>
+
+      <label for="yAxisWidth">Y-axis Line Width:</label>
+      <input type="number" id="yAxisWidth" value="2" step="0.5"><br>
+    </fieldset>
+  </div>
+
+  <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+  <!-- Generate Plot Settings -->
+    <fieldset style="flex: 1; min-width: 300px;">
+      <legend>Generate Plot Settings</legend>
+      <label for="showColorbar">Show Color Legend:</label>
+      <input type="checkbox" id="showColorbar" checked style="margin-bottom: 1.5em;"><br>
+
+      <label for="displayWidth">Display Width (px):</label>
+      <input type="number" id="displayWidth" value="600" step="50"><br>
+
+      <label for="displayHeight">Display Height (px):</label>
+      <input type="number" id="displayHeight" value="400" step="50"><br>
+    </fieldset>
+
+   <!-- Export Settings -->
+    <fieldset style="flex: 1; min-width: 300px;">
+      <legend>Export Settings</legend>
+      <label for="exportDPI">Export Image DPI:</label>
+      <input type="number" id="exportDPI" value="300" step="50" min="72"><br>
+    
+      <label for="aspectWidth">Export Width (px):</label>
+      <input type="number" id="aspectWidth" value="600" step="50"><br>
+    
+      <label for="aspectHeight">Export Height (px):</label>
+      <input type="number" id="aspectHeight" value="400"step="50"><br>
+    </fieldset>
+  </div>
+
+<!-- button -->
+  <button id="plotButton">Generate Plot</button>
+  <button id="exportPNG">Export PNG</button>
+  <div id="plotDiv" style="width:600px; height:400px;"></div>
+</section>
+<script>
+  function hexToRgba(hex, alpha) {
+    let r = parseInt(hex.slice(1, 3), 16);
+    let g = parseInt(hex.slice(3, 5), 16);
+    let b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  function colorToRgba(colorName, alpha) {
+    const colorMap = {
+      black: [0, 0, 0],
+      grey: [128, 128, 128]
+    };
+    let [r, g, b] = colorMap[colorName] || [0, 0, 0];
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+
+  function updateColorPreview() {
+    const hex = document.getElementById("errorBarColor").value;
+    const alpha = parseFloat(document.getElementById("errorBarOpacity").value);
+    document.getElementById("colorPreview").style.backgroundColor = hexToRgba(hex, alpha);
+  }
+
+  document.getElementById("errorBarColor").addEventListener("change", updateColorPreview);
+  document.getElementById("errorBarOpacity").addEventListener("input", updateColorPreview);
+  updateColorPreview();
+
+  document.getElementById("toggleBorders").addEventListener("change", function () {
+    const table = document.getElementById("dataTable");
+    if (this.checked) {
+      table.classList.remove("hide-borders");
+    } else {
+      table.classList.add("hide-borders");
+    }
+  });
+
+  function addRow() {
+    const tbody = document.getElementById("tableBody");
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input type="text" class="groupName" placeholder="Group"></td>
+      <td><input type="number" step="any" class="Value" placeholder="Value"></td>
+      <td><input type="number" step="any" class="ValueLower" placeholder="Lower Bound"></td>
+      <td><input type="number" step="any" class="ValueUpper" placeholder="Upper Bound"></td>
+      <td><button type="button" onclick="this.closest('tr').remove()">Delete</button></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  function updateBarGradientPreview() {
+    const gradientMap = {
+      red: "linear-gradient(to right, #fee5d9, #e31a1c)",
+      orange: "linear-gradient(to right, #feedde, #fd8d3c)",
+      yellow: "linear-gradient(to right, #ffffb2, #fec44f)",
+      green: "linear-gradient(to right, #e5f5e0, #2ca25f)",
+      cyan: "linear-gradient(to right, #e0f3f8, #3182bd)",
+      blue: "linear-gradient(to right, #e0ecf4, #6baed6)",
+      purple: "linear-gradient(to right, #f2f0f7, #9e1a5e)"
+    };
+    const selected = document.getElementById("colorGradient").value;
+    document.getElementById("barGradientPreview").style.background = gradientMap[selected];
+  }
+  document.getElementById("colorGradient").addEventListener("change", updateBarGradientPreview);
+  updateBarGradientPreview();
+
+  document.getElementById("plotButton").addEventListener("click", function () {
+    const gradients = {
+      red: [[0, "#fee5d9"], [1, "#e31a1c"]],
+      orange: [[0, "#feedde"], [1, "#fd8d3c"]],
+      yellow: [[0, "#ffffb2"], [1, "#fec44f"]],
+      green: [[0, "#e5f5e0"], [1, "#2ca25f"]],
+      cyan: [[0, "#e0f3f8"], [1, "#3182bd"]],
+      blue: [[0, "#e0ecf4"], [1, "#6baed6"]],
+      purple: [[0, "#f2f0f7"], [1, "#9e1a5e"]]
+    }; 
+
+    let rows = document.querySelectorAll("#tableBody tr");
+    let groups = [], Values = [], lowerErrors = [], upperErrors = [];
+
+    rows.forEach(row => {
+      let group = row.querySelector(".groupName").value;
+      let value = parseFloat(row.querySelector(".Value").value);
+      let low = parseFloat(row.querySelector(".ValueLower").value);
+      let high = parseFloat(row.querySelector(".ValueUpper").value);
+      groups.push(group);
+      Values.push(value);
+      lowerErrors.push(value - low);
+      upperErrors.push(high - value);
+    });
+
+    let trace = {
+      x: groups.map((_, i) => i),
+      y: Values,
+      type: 'bar',
+      width: parseFloat(document.getElementById("barWidth").value),
+      marker: {
+        color: Values,
+        colorscale: gradients[document.getElementById("colorGradient").value],
+        colorbar: {
+          title: 'Value',
+          outlinewidth: 0
+        }
+      }
+    };
+    if (!document.getElementById("showColorbar").checked) {
+      delete trace.marker.colorbar;
+    }
+
+    if (document.getElementById("errorBarVisible").checked) {
+      trace.error_y = {
+        type: 'data',
+        symmetric: false,
+        array: upperErrors,
+        arrayminus: lowerErrors,
+        thickness: parseFloat(document.getElementById("errorBarThickness").value),
+        width: parseFloat(document.getElementById("errorBarWidth").value),
+        color: hexToRgba(document.getElementById("errorBarColor").value, parseFloat(document.getElementById("errorBarOpacity").value))
+      };
+    }
+
+    let layout = {
+      yaxis: {
+        title: document.getElementById("yAxisLabel").value,
+        automargin: true,
+        showline: document.getElementById("showYAxis").checked,
+        showgrid: document.getElementById("showYGrid").checked,
+        zeroline: false,
+        linecolor: colorToRgba(
+          document.getElementById("yAxisColor").value,
+          parseFloat(document.getElementById("yAxisOpacity").value)
+          ),
+        tickcolor: colorToRgba(
+          document.getElementById("yAxisColor").value,
+          parseFloat(document.getElementById("yAxisOpacity").value)
+        ),
+        linewidth: parseFloat(document.getElementById("yAxisWidth").value),
+        ticks: document.getElementById("showYTick").checked ? document.getElementById("yTickDirection").value : '',
+        tickwidth: parseFloat(document.getElementById("yTickWidth").value),
+        ticklen: parseFloat(document.getElementById("yTickLength").value)
+      },
+      xaxis: {
+        title: document.getElementById("xAxisLabel").value,
+        automargin: true,
+        showline: document.getElementById("showXAxis").checked,
+        showgrid: document.getElementById("showXGrid").checked,
+        zeroline: false,
+        linecolor: colorToRgba(
+          document.getElementById("xAxisColor").value,
+          parseFloat(document.getElementById("xAxisOpacity").value)
+        ),
+        tickcolor: colorToRgba(
+          document.getElementById("xAxisColor").value,
+          parseFloat(document.getElementById("xAxisOpacity").value)
+        ),
+        linewidth: parseFloat(document.getElementById("xAxisWidth").value),
+        ticks: document.getElementById("showXTick").checked ? document.getElementById("xTickDirection").value : '',
+        tickwidth: parseFloat(document.getElementById("xTickWidth").value),
+        ticklen: parseFloat(document.getElementById("xTickLength").value),
+        tickvals: groups.map((_, i) => i),
+        ticktext: groups,
+        range: [-0.9, groups.length + 0]
+      },
+      margin: { t: 20 }
+    };
+    // 设置图表显示尺寸
+    let displayWidth = parseInt(document.getElementById("displayWidth").value);
+    let displayHeight = parseInt(document.getElementById("displayHeight").value);
+    let plotDiv = document.getElementById("plotDiv");
+    plotDiv.style.width = displayWidth + "px";
+    plotDiv.style.height = displayHeight + "px";
+    Plotly.newPlot('plotDiv', [trace], layout);
+  });
+
+  document.getElementById("exportPNG").addEventListener("click", function () {
+    Plotly.downloadImage(
+      document.getElementById("plotDiv"),
+      {
+        format: 'png',
+        filename: 'bar_plot',
+        height: parseInt(document.getElementById("aspectHeight").value),
+        width: parseInt(document.getElementById("aspectWidth").value),
+        scale: parseInt(document.getElementById("exportDPI").value) / 96
+      }
+    );
+  });
+</script>
+
+<script>
+  document.getElementById("calcButton").addEventListener("click", function () {
+    let valuesStr = document.getElementById("valuesInput").value;
+    let values = valuesStr.split(",").map(s => parseFloat(s.trim())).filter(num => !isNaN(num));
+    if (values.length === 0) {
+      document.getElementById("calcOutput").innerText = "Please enter valid numeric values.";
+      return;
+    }
+    let sum = values.reduce((a, b) => a + b, 0);
+    let mean = sum / values.length;
+    let variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (values.length - 1);
+    let sd = Math.sqrt(variance);
+    let meanPlusSD = mean + sd;
+    let meanMinusSD = mean - sd;
+
+    document.getElementById("calcOutput").innerHTML =
+      `Mean: <span style="color:blue;">${mean.toFixed(3)}</span>&emsp;` +
+      `Mean - SD: <span style="color:blue;">${meanMinusSD.toFixed(3)}</span>&emsp;` +
+      `Mean + SD: <span style="color:blue;">${meanPlusSD.toFixed(3)}</span>&emsp;` +
+      `Mean ± SD: <span style="color:blue;">${mean.toFixed(3)} ± ${sd.toFixed(3)}</span>`;
+      // `Mean : ${mean.toFixed(3)}&emsp;Mean + SD: ${meanPlusSD.toFixed(3)}&emsp;Mean - SD: ${meanMinusSD.toFixed(3)}&emsp; Mean ± SD: ${mean.toFixed(3)} ± ${sd.toFixed(3)}`;
+  });
+</script>
+</body>
+</html>
