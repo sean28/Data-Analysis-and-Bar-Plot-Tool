@@ -1,1 +1,0 @@
-# Data-Analysis-and-Bar-Plot-Tool
