@@ -1,3 +1,3 @@
-# Data-Analysis-and-Bar-Plot-Tool
+# Data Analysis and Bar Plot Tool
 <div style="text-align: justify"> Data Analysis and Bar Plot Tool is a lightweight, browser-based application designed for intuitive statistical calculation and customizable bar chart visualization. It is ideal for researchers, students, and data analysts who need a fast and flexible way to analyze numeric data and export publication-ready graphics. I redeployed this online tool in my repository and you can use this tool for free by clicking <a href="https://sean28.github.io/Data-Analysis-and-Bar-Plot-Tool/">here</a>.</div>
 <div style="text-align: justify"> <br> </div>
