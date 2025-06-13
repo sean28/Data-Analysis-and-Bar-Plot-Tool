@@ -190,31 +190,48 @@
     <!-- X-axis Settings -->
     <fieldset style="flex: 1; min-width: 300px;">
       <legend>X-axis Settings</legend>
-      <label for="showXTick">Show X-axis Ticks:</label>
-      <input type="checkbox" id="showXTick" checked><br>
-
-      <label for="xTickDirection">X-axis Tick Direction:</label>
-      <select id="xTickDirection">
+      
+      <label for="showXTick" style="display: inline-block; width: 200px;">Show X-axis Ticks:</label>
+      <input type="checkbox" id="showXTick" checked style="margin-right: 40px;">
+      
+      <label for="xTickDirection" style="display: inline-block; width: 160px;">Tick Direction:</label>
+      <select id="xTickDirection" style="width: 100px;">
         <option value="outside">Outside</option>
         <option value="inside">Inside</option>
       </select><br>
 
+      <label for="showXAxis">Show X-axis Line:</label>
+      <input type="checkbox" id="showXAxis" checked><br>
+      
+      <label for="showXGrid">Show X-axis Grid Lines:</label>
+      <input type="checkbox" id="showXGrid" checked><br>
+
+      <label for="xTickFontSize" style="display:inline-block; width:200px;margin-top: 10px;">
+        X-axis Font Size:
+      </label>
+      <input type="number" id="xTickFontSize" value="14" step="1" style="width:80px; margin-right:40px;">
+      
+      <label for="xTickFontColor" style="display:inline-block; width:160px;margin-left: -20px;">
+        X-axis Font Color:
+      </label>
+      <select id="xTickFontColor" style="width:60px; margin-left: -20px;">
+        <option value="black" selected>Black</option>
+        <option value="grey">Grey</option>
+        </select><br>
+      
       <label for="xTickWidth">X-axis Tick Width:</label>
       <input type="number" id="xTickWidth" value="2" step="0.25"><br>
 
       <label for="xTickLength">X-axis Tick Length:</label>
       <input type="number" id="xTickLength" value="5" step="1"><br>
 
-      <label for="showXAxis">Show X-axis Line:</label>
-      <input type="checkbox" id="showXAxis" checked><br>
-
-      <label for="showXGrid">Show X-axis Grid Lines:</label>
-      <input type="checkbox" id="showXGrid" checked><br>
+      <label for="xAxisWidth">X-axis Line Width:</label>
+      <input type="number" id="xAxisWidth" value="2" step="0.5"><br>
 
       <label for="xAxisColor">X-axis Line Color:</label>
       <select id="xAxisColor">
-        <option value="black">Black</option>
-        <option value="grey" selected>Grey</option>
+        <option value="black" selected>Black</option>
+        <option value="grey" >Grey</option>
       </select>
       <label for="xAxisOpacity" style="margin-left: 40px;">
         Opacity (0~1):
@@ -222,66 +239,58 @@
       </label><br>
       </select>
 
-      <label for="xAxisWidth">X-axis Line Width:</label>
-      <input type="number" id="xAxisWidth" value="2" step="0.5"><br>
-
-      <label for="xTickFontSize">X-axis Tick Font Size:</label>
-      <input type="number" id="xTickFontSize" value="14" step="1"><br>
-
-      <label for="xTickFontColor">X-axis Tick Font Color:</label>
-      <select id="xTickFontColor">
-        <option value="black" selected>Black</option>
-        <option value="grey">Grey</option>
-      </select><br>
-
     </fieldset>
 
     <!-- Y-axis Settings -->
     <fieldset style="flex: 1; min-width: 300px;">
       <legend>Y-axis Settings</legend>
-      <label for="showYTick">Show Y-axis Ticks:</label>
-      <input type="checkbox" id="showYTick" checked><br>
-
-      <label for="yTickDirection">Y-axis Tick Direction:</label>
-      <select id="yTickDirection">
+      <label for="showYTick" style="display: inline-block; width: 200px;">Show Y-axis Ticks:</label>
+      <input type="checkbox" id="showYTick" checked style="margin-right: 40px;">
+      
+      <label for="yTickDirection" style="display: inline-block; width: 160px;">Tick Direction:</label>
+      <select id="yTickDirection" style="width: 100px;">
         <option value="outside">Outside</option>
         <option value="inside">Inside</option>
       </select><br>
 
+      <label for="showYAxis">Show Y-axis Line:</label>
+      <input type="checkbox" id="showYAxis" checked><br>
+      
+      <label for="showYGrid">Show Y-axis Grid Lines:</label>
+      <input type="checkbox" id="showYGrid" checked><br>
+
+      <label for="yTickFontSize" style="display:inline-block; width:200px; margin-top: 10px;">
+        Y-axis Font Size:
+      </label>
+      <input type="number" id="yTickFontSize" value="14" step="1" style="width:80px; margin-right:40px;">
+      
+      <label for="yTickFontColor" style="display:inline-block; width:160px;margin-left: -20px;">
+        Y-axis Font Color:
+      </label>
+      <select id="yTickFontColor" style="width:60px; margin-left: -20px;">
+        <option value="black" selected>Black</option>
+        <option value="grey">Grey</option>
+        </select><br>
+      
       <label for="yTickWidth">Y-axis Tick Width:</label>
       <input type="number" id="yTickWidth" value="2" step="0.25"><br>
 
       <label for="yTickLength">Y-axis Tick Length:</label>
       <input type="number" id="yTickLength" value="5" step="1"><br>
 
-      <label for="showYAxis">Show Y-axis Line:</label>
-      <input type="checkbox" id="showYAxis" checked><br>
-
-      <label for="showYGrid">Show Y-axis Grid Lines:</label>
-      <input type="checkbox" id="showYGrid" checked><br>
+      <label for="yAxisWidth">Y-axis Line Width:</label>
+      <input type="number" id="yAxisWidth" value="2" step="0.5"><br>
 
       <label for="yAxisColor">Y-axis Line Color:</label>
       <select id="yAxisColor">
-        <option value="black">Black</option>
-        <option value="grey" selected>Grey</option>
+        <option value="black" selected>Black</option>
+        <option value="grey" >Grey</option>
       </select>
       <label for="yAxisOpacity" style="margin-left: 20px;">
         Opacity (0~1):
         <input type="number" id="yAxisOpacity" min="0" max="1" step="0.1" value="1" style="width: 60px; margin-left: 20px;">
       </label><br>
       </select>
-
-      <label for="yAxisWidth">Y-axis Line Width:</label>
-      <input type="number" id="yAxisWidth" value="2" step="0.5"><br>
-
-      <label for="yTickFontSize">Y-axis Tick Font Size:</label>
-      <input type="number" id="yTickFontSize" value="14" step="1"><br>
-
-      <label for="yTickFontColor">Y-axis Tick Font Color:</label>
-      <select id="yTickFontColor">
-        <option value="black" selected>Black</option>
-        <option value="grey">Grey</option>
-      </select><br>
 
     </fieldset>
   </div>
