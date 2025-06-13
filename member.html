@@ -4,49 +4,20 @@
   <meta charset="UTF-8">
   <title>Data Analysis and Bar Plot Tool</title>
   <script src="plotly-latest.min.js"></script>
+  <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>  -->
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h1, h2, h3 { color: #333; }
-    textarea, input, select { padding: 5px; margin: 5px 0; }
-    table, th, td {
-      border: 1px solid #ccc;
-      border-collapse: collapse;
-      padding: 5px;
-      text-align: center;
-    }
-    table { margin-bottom: 10px; }
-    .hide-borders table, .hide-borders th, .hide-borders td {
-      border: none;
-    }
-    label {
-      display: inline-block;
-      width: 200px;
-      margin-top: 5px;
-    }
-    #plotDiv { margin-top: 20px; }
-    #colorPreview {
-      display: inline-block;
-      width: 30px;
-      height: 20px;
-      border: 1px solid #ccc;
-      vertical-align: middle;
-      margin-left: 10px;
-    }
-    fieldset {
-      border: 1px solid #aaa;
-      padding: 10px;
-      margin-top: 15px;
-      box-sizing: border-box;
-    }
-    legend {
-      font-weight: bold;
-      padding: 0 10px;
-    }
-    #plotButton, #exportPNG {
-      font-size: 16px;
-      padding: 10px 20px;
-      margin-top: 10px;
-    }
+    body{font-family:Arial, sans-serif;margin:20px;}
+    h1, h2, h3{color:#333;}
+    textarea, input, select{padding:5px;margin:5px 0;}
+    table, th, td{border:1px solid #ccc;border-collapse:collapse;padding:5px;text-align:center;}
+    table{margin-bottom:10px;}
+    .hide-borders table, .hide-borders th, .hide-borders td{border:none;}
+    label{display:inline-block;width:200px;margin-top:5px;}
+    #plotDiv{margin-top:20px;}
+    #colorPreview{display:inline-block;width:30px;height:20px;border:1px solid #ccc;vertical-align:middle;margin-left:10px;}
+    fieldset{border:1px solid #aaa;padding:10px;margin-top:15px;box-sizing:border-box;}
+    legend{font-weight:bold;padding:0 10px;}
+    #plotButton, #exportPNG{font-size:16px;padding:10px 20px;margin-top:10px;}
   </style>
 </head>
 <body>
@@ -186,12 +157,31 @@
       <legend>X-axis Label</legend>
       <label for="xAxisLabel">X-axis Label:</label>
       <input type="text" id="xAxisLabel" value="Group"><br>
+
+      <label for="xAxisTitleFontSize">X-axis Label Font Size:</label>
+      <input type="number" id="xAxisTitleFontSize" value="16" step="1"><br>
+
+      <label for="xAxisTitleFontColor">X-axis Label Font Color:</label>
+      <select id="xAxisTitleFontColor">
+        <option value="black" selected>Black</option>
+        <option value="grey">Grey</option>
+      </select><br>
+
     </fieldset>
      <!-- Y-axis Label -->
   <fieldset style="flex: 1; min-width: 300px;">
     <legend>Y-axis Label</legend>
     <label for="yAxisLabel">Y-axis Label:</label>
     <input type="text" id="yAxisLabel" value="Value"><br>
+
+    <label for="yAxisTitleFontSize">Y-axis Label Font Size:</label>
+    <input type="number" id="yAxisTitleFontSize" value="16" step="1"><br>
+
+    <label for="yAxisTitleFontColor">Y-axis Label Font Color:</label>
+    <select id="yAxisTitleFontColor">
+      <option value="black" selected>Black</option>
+      <option value="grey">Grey</option>
+    </select><br>
   </fieldset>
   </div>
  
@@ -234,6 +224,16 @@
 
       <label for="xAxisWidth">X-axis Line Width:</label>
       <input type="number" id="xAxisWidth" value="2" step="0.5"><br>
+
+      <label for="xTickFontSize">X-axis Tick Font Size:</label>
+      <input type="number" id="xTickFontSize" value="14" step="1"><br>
+
+      <label for="xTickFontColor">X-axis Tick Font Color:</label>
+      <select id="xTickFontColor">
+        <option value="black" selected>Black</option>
+        <option value="grey">Grey</option>
+      </select><br>
+
     </fieldset>
 
     <!-- Y-axis Settings -->
@@ -273,6 +273,16 @@
 
       <label for="yAxisWidth">Y-axis Line Width:</label>
       <input type="number" id="yAxisWidth" value="2" step="0.5"><br>
+
+      <label for="yTickFontSize">Y-axis Tick Font Size:</label>
+      <input type="number" id="yTickFontSize" value="14" step="1"><br>
+
+      <label for="yTickFontColor">Y-axis Tick Font Color:</label>
+      <select id="yTickFontColor">
+        <option value="black" selected>Black</option>
+        <option value="grey">Grey</option>
+      </select><br>
+
     </fieldset>
   </div>
 
@@ -449,7 +459,7 @@
 
     let layout = {
       yaxis: {
-        title: document.getElementById("yAxisLabel").value,
+        title: { text: document.getElementById("yAxisLabel").value, font: { color: document.getElementById("yAxisTitleFontColor").value, size: parseFloat(document.getElementById("yAxisTitleFontSize").value) } },
         automargin: true,
         showline: document.getElementById("showYAxis").checked,
         showgrid: document.getElementById("showYGrid").checked,
@@ -465,10 +475,11 @@
         linewidth: parseFloat(document.getElementById("yAxisWidth").value),
         ticks: document.getElementById("showYTick").checked ? document.getElementById("yTickDirection").value : '',
         tickwidth: parseFloat(document.getElementById("yTickWidth").value),
-        ticklen: parseFloat(document.getElementById("yTickLength").value)
+        ticklen: parseFloat(document.getElementById("yTickLength").value),
+        tickfont: { color: document.getElementById("yTickFontColor").value, size: parseFloat(document.getElementById("yTickFontSize").value) }
       },
       xaxis: {
-        title: document.getElementById("xAxisLabel").value,
+        title: {text: document.getElementById("xAxisLabel").value,font: { color: document.getElementById("xAxisTitleFontColor").value, size: parseFloat(document.getElementById("xAxisTitleFontSize").value)}},
         automargin: true,
         showline: document.getElementById("showXAxis").checked,
         showgrid: document.getElementById("showXGrid").checked,
@@ -487,7 +498,8 @@
         ticklen: parseFloat(document.getElementById("xTickLength").value),
         tickvals: groups.map((_, i) => i),
         ticktext: groups,
-        range: [-0.9, groups.length + 0]
+        range: [-0.9, groups.length + 0],
+        tickfont: { color: document.getElementById("xTickFontColor").value, size: parseFloat(document.getElementById("xTickFontSize").value)}
       },
       margin: { t: 20 }
     };
